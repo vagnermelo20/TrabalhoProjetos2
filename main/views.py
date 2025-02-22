@@ -1,4 +1,6 @@
 import json
+import re
+from django.core.paginator import Paginator
 from django.shortcuts import render, redirect
 from django.views import View
 from django.http import JsonResponse
@@ -114,19 +116,41 @@ class AlunoCreateView(View):
 
 
 
-class CursoListView(View):
-    def get(self, request):
-        cursos = Curso.objects.all()
-        return render(request, "cursos.html", {"cursos": cursos})
+# class CursoListView(View):
+#     def get(self, request):
+#         cursos = Curso.objects.all()
+#         materias = Materia.objects.all()
+#         professores = Professor.objects.all()
+#         alunos = Aluno.objects.all()
+#         return render(request, "cursos.html", {
+#             "cursos": cursos,
+#             "materias": materias,
+#             "professores": professores,
+#             "alunos": alunos
+#         })
 
-    def post(self, request):
-        Curso.objects.create(
-            nome=request.POST["nome"],
-            carga_horaria=request.POST["carga_horaria"],
-            data_inicio=request.POST["data_inicio"],
-            data_fim=request.POST["data_fim"]
-        )
-        return redirect("cursos")
+#     def post(self, request):
+#         curso = Curso.objects.create(
+#             nome=request.POST["nome"],
+#             carga_horaria=request.POST["carga_horaria"],
+#             data_inicio=request.POST["data_inicio"],
+#             data_fim=request.POST["data_fim"]
+#         )
+
+#         # Adiciona as matérias selecionadas
+#         if "materias" in request.POST:
+#             curso.materias.set(request.POST.getlist("materias"))
+
+#         # Adiciona os professores selecionados
+#         if "professores" in request.POST:
+#             curso.professores.set(request.POST.getlist("professores"))
+
+#         # Adiciona os alunos selecionados
+#         if "alunos" in request.POST:
+#             curso.alunos.set(request.POST.getlist("alunos"))
+
+#         return redirect("cursos")
+    
 
 class MateriaListView(View):
     def get(self, request):
@@ -172,3 +196,43 @@ class AlunoListView(View):
             data_nascimento=request.POST["data_nascimento"]
         )
         return redirect("alunos")
+    
+
+
+
+
+class CursoListView(View):
+    def get(self, request):
+        cursos = Curso.objects.all()
+        if cursos.count() >= 1:
+            paginator = Paginator(cursos, 10)  # Paginação (10 cursos por página)
+            page_number = request.GET.get("page")
+            page_obj = Paginator.get_page(page_number)
+        
+            return render(request, "cursos.html", {"cursos": page_obj})
+        else:
+          return render(request, "cursos.html", {"cursos": cursos})
+class CursoCreateView(View):
+    def post(self, request):
+        try:
+            nome = request.POST["nome"]
+            carga_horaria = int(request.POST["carga_horaria"])
+            data_inicio = request.POST["data_inicio"]
+            data_fim = request.POST["data_fim"]
+
+            # Criar curso
+            curso = Curso.objects.create(
+                nome=nome, carga_horaria=carga_horaria, data_inicio=data_inicio, data_fim=data_fim
+            )
+
+            # Adiciona relações Many-to-Many
+            curso.materias.set(request.POST.getlist("materias", []))
+            curso.professores.set(request.POST.getlist("professores", []))
+            curso.alunos.set(request.POST.getlist("alunos", []))
+
+            return redirect("cursos")
+
+        except KeyError as e:
+            return JsonResponse({"error": f"Campo ausente: {str(e)}"}, status=400)
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=400)

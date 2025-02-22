@@ -4,27 +4,70 @@
 
 {% block content %}
     <h2>Cursos Disponíveis</h2>
+    
     <ul>
         {% for curso in cursos %}
             <li>{{ curso.nome }} - {{ curso.carga_horaria }} horas</li>
+        {% empty %}
+            <p>Nenhum curso cadastrado.</p>
         {% endfor %}
     </ul>
+
+    <!-- Paginação -->
+    <div>
+        {% if cursos.has_previous %}
+            <a href="?page=1">Primeira</a>
+            <a href="?page={{ cursos.previous_page_number }}">Anterior</a>
+        {% endif %}
+
+        <span>Página {{ cursos.number }} de {{ cursos.paginator.num_pages }}</span>
+
+        {% if cursos.has_next %}
+            <a href="?page={{ cursos.next_page_number }}">Próxima</a>
+            <a href="?page={{ cursos.paginator.num_pages }}">Última</a>
+        {% endif %}
+    </div>
 
     <h2>Adicionar Curso</h2>
     <form method="POST">
         {% csrf_token %}
+
         <label for="nome">Nome do Curso:</label>
-        <input type="text" id="nome" name="nome" required>
+        <input type="text" id="nome" name="nome" required style="width: 100%; height: 40px; font-size: 18px;">
 
         <label for="carga_horaria">Carga Horária:</label>
-        <input type="number" id="carga_horaria" name="carga_horaria" required>
+        <input type="number" id="carga_horaria" name="carga_horaria" required style="width: 100%; height: 40px; font-size: 18px;">
 
         <label for="data_inicio">Data de Início:</label>
-        <input type="date" id="data_inicio" name="data_inicio" required>
+        <input type="date" id="data_inicio" name="data_inicio" required style="width: 100%; height: 40px; font-size: 18px;">
 
         <label for="data_fim">Data de Fim:</label>
-        <input type="date" id="data_fim" name="data_fim" required>
+        <input type="date" id="data_fim" name="data_fim" required style="width: 100%; height: 40px; font-size: 18px;">
 
-        <button type="submit">Adicionar</button>
+        <!-- Seleção de Matérias -->
+        <label for="materias">Matérias:</label>
+        <select id="materias" name="materias" multiple style="width: 100%; height: 150px; font-size: 18px;">
+            {% for materia in materias %}
+                <option value="{{ materia.id }}">{{ materia.nome }}</option>
+            {% endfor %}
+        </select>
+
+        <!-- Seleção de Professores -->
+        <label for="professores">Professores:</label>
+        <select id="professores" name="professores" multiple style="width: 100%; height: 150px; font-size: 18px;">
+            {% for professor in professores %}
+                <option value="{{ professor.id }}">{{ professor.primeiro_nome }} {{ professor.ultimo_nome }}</option>
+            {% endfor %}
+        </select>
+
+        <!-- Seleção de Alunos -->
+        <label for="alunos">Alunos:</label>
+        <select id="alunos" name="alunos" multiple style="width: 100%; height: 150px; font-size: 18px;">
+            {% for aluno in alunos %}
+                <option value="{{ aluno.id }}">{{ aluno.primeiro_nome }} {{ aluno.ultimo_nome }}</option>
+            {% endfor %}
+        </select>
+
+        <button type="submit" style="width: 100%; height: 50px; font-size: 18px; background-color: #28a745; color: white; border: none; cursor: pointer;">Adicionar</button>
     </form>
 {% endblock %}
