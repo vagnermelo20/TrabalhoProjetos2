@@ -231,7 +231,6 @@ class CursoCreateView(View):
             curso.alunos.set(request.POST.getlist("alunos", []))
 
             return redirect("cursos")
-
         except KeyError as e:
             return JsonResponse({"error": f"Campo ausente: {str(e)}"}, status=400)
         except Exception as e:
