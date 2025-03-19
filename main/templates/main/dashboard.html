@@ -1,0 +1,162 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}Dashboard - Sistema de Cadastro de Alunos{% endblock %}
+
+{% block extra_css %}
+<style>
+    .stats-number {
+        font-size: 2.5rem;
+        font-weight: 600;
+        color: #4b6cb7;
+    }
+    .stats-label {
+        font-size: 0.9rem;
+        color: #6c757d;
+        text-transform: uppercase;
+    }
+    .chart-container {
+        position: relative;
+        margin: auto;
+        height: 300px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Dashboard</h1>
+    <div>
+        <a href="{% url 'alunos' %}" class="btn btn-primary me-2">
+            <i class="fas fa-users"></i> Ver Alunos
+        </a>
+        <a href="{% url 'aluno-create' %}" class="btn btn-success">
+            <i class="fas fa-plus"></i> Novo Aluno
+        </a>
+    </div>
+</div>
+
+<!-- Estatísticas rápidas -->
+<div class="row mb-4">
+    <div class="col-md-4 mb-4 mb-md-0">
+        <div class="card dashboard-card shadow-sm h-100">
+            <div class="card-body text-center">
+                <div class="dashboard-value">{{ total_alunos|default:"0" }}</div>
+                <div class="dashboard-label">TOTAL DE ALUNOS</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4 mb-4 mb-md-0">
+        <div class="card dashboard-card card-success shadow-sm h-100">
+            <div class="card-body text-center">
+                <div class="dashboard-value">{{ alunos_apadrinhados|default:"0" }}</div>
+                <div class="dashboard-label">ALUNOS APADRINHADOS</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card dashboard-card card-info shadow-sm h-100">
+            <div class="card-body text-center">
+                <div class="dashboard-value">{{ escolaridade_superior|default:"0" }}</div>
+                <div class="dashboard-label">ENSINO SUPERIOR</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Gráficos -->
+<div class="row mb-4">
+    <div class="col-md-6 mb-4 mb-md-0">
+        <div class="card shadow-sm h-100">
+            <div class="card-header bg-white">
+                <h5 class="card-title mb-0">Distribuição por Escolaridade</h5>
+            </div>
+            <div class="card-body">
+                <div class="chart-container">
+                    <canvas id="graficoEscolaridade" data-valores="{{ alunos_por_escolaridade|safe }}"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-header bg-white">
+                <h5 class="card-title mb-0">Distribuição por Raça/Cor</h5>
+            </div>
+            <div class="card-body">
+                <div class="chart-container">
+                    <canvas id="graficoRaca" data-valores="{{ alunos_por_raca|safe }}"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Distribuição por Situação Profissional -->
+<div class="row">
+    <div class="col-md-6 mb-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-header bg-white">
+                <h5 class="card-title mb-0">Situação Profissional</h5>
+            </div>
+            <div class="card-body">
+                <div class="chart-container">
+                    <canvas id="graficoProfissional" data-valores="{{ situacao_profissional_data|safe }}"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-header bg-white">
+                <h5 class="card-title mb-0">Resumo de Alunos</h5>
+            </div>
+            <div class="card-body">
+                {% if total_alunos > 0 %}
+                <div class="table-container">
+                    <table class="table table-custom">
+                        <thead>
+                            <tr>
+                                <th>Categoria</th>
+                                <th>Quantidade</th>
+                                <th>Porcentagem</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Alunos Apadrinhados</td>
+                                <td>{{ alunos_apadrinhados }}</td>
+                                <td>
+                                    {% widthratio alunos_apadrinhados total_alunos 100 %}%
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Ensino Superior</td>
+                                <td>{{ escolaridade_superior }}</td>
+                                <td>
+                                    {% widthratio escolaridade_superior total_alunos 100 %}%
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="alert alert-info">Nenhum dado disponível para exibição</div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<!-- Chart.js para os gráficos -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+<!-- Scripts personalizados -->
+<script src="{% static 'js/dashboard.js' %}"></script>
+{% endblock %} 

@@ -1,0 +1,85 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}Início - Sistema de Cadastro de Alunos{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="jumbotron p-5 bg-dashboard text-white rounded shadow">
+            <h1 class="display-4">Bem-vindo ao Sistema de Cadastro de Alunos</h1>
+            <p class="lead">Este sistema permite gerenciar informações detalhadas de alunos, suas condições socioeconômicas e histórico escolar.</p>
+            <hr class="my-4 bg-light">
+            <p>Use o menu acima para navegar pelo sistema ou clique em um dos links abaixo.</p>
+            <div class="mt-4">
+                <a class="btn btn-light btn-lg me-2" href="{% url 'aluno-list' %}" role="button">
+                    <i class="fas fa-users"></i> Ver Alunos
+                </a>
+                <a class="btn btn-success btn-lg" href="{% url 'aluno-create' %}" role="button">
+                    <i class="fas fa-plus"></i> Cadastrar Novo Aluno
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <div class="card card-hover shadow-sm h-100">
+            <div class="card-header bg-primary text-white">
+                <h5 class="card-title mb-0">Total de Alunos</h5>
+            </div>
+            <div class="card-body text-center">
+                <p class="display-4">{{ total_alunos }}</p>
+                <a href="{% url 'aluno-list' %}" class="btn btn-primary">
+                    <i class="fas fa-eye"></i> Ver Todos
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4 mb-4">
+        <div class="card card-hover shadow-sm h-100">
+            <div class="card-header bg-success text-white">
+                <h5 class="card-title mb-0">Acesso Rápido</h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        <a href="{% url 'aluno-create' %}">
+                            <i class="fas fa-plus"></i> Cadastrar Novo Aluno
+                        </a>
+                    </li>
+                    <li class="list-group-item">
+                        <a href="{% url 'dashboard' %}">
+                            <i class="fas fa-chart-bar"></i> Ver Dashboard
+                        </a>
+                    </li>
+                    <li class="list-group-item">
+                        <a href="{% url 'admin:index' %}">
+                            <i class="fas fa-cogs"></i> Acessar Admin
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4 mb-4">
+        <div class="card card-hover shadow-sm h-100">
+            <div class="card-header bg-info text-white">
+                <h5 class="card-title mb-0">API REST</h5>
+            </div>
+            <div class="card-body">
+                <p class="card-text">O sistema também oferece uma API REST para integração com outros sistemas.</p>
+                <p class="card-text">
+                    <small class="text-muted">Endpoints disponíveis para Alunos, Hábitos Alimentares e Grupos Comunitários.</small>
+                </p>
+                <a href="/api/alunos/" class="btn btn-info text-white">
+                    <i class="fas fa-code"></i> Acessar API
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,55 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Login - Sistema de Cadastro de Alunos{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-4">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white text-center">
+                <h4 class="mb-0">Acesso ao Sistema</h4>
+            </div>
+            <div class="card-body">
+                {% if form.errors %}
+                <div class="alert alert-danger">
+                    <strong>Erro!</strong> Nome de usuário ou senha incorretos.
+                </div>
+                {% endif %}
+
+                {% if next %}
+                    {% if user.is_authenticated %}
+                    <div class="alert alert-warning">
+                        Sua conta não tem acesso a esta página. Para continuar, faça login com uma conta que tenha.
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">
+                        Por favor, faça login para acessar esta página.
+                    </div>
+                    {% endif %}
+                {% endif %}
+
+                <form method="post" action="{% url 'login' %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="id_username" class="form-label">Nome de usuário</label>
+                        <input type="text" name="username" id="id_username" class="form-control" required autofocus>
+                    </div>
+                    <div class="mb-3">
+                        <label for="id_password" class="form-label">Senha</label>
+                        <input type="password" name="password" id="id_password" class="form-control" required>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">Entrar</button>
+                    </div>
+                    <input type="hidden" name="next" value="{{ next }}">
+                </form>
+            </div>
+            <div class="card-footer text-center">
+                <p class="mb-0">
+                    <a href="{% url 'admin:index' %}">Administração</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
